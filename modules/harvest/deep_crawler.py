@@ -82,7 +82,7 @@ def run(target, engine):
             req = urllib.request.Request(url, headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             })
-            resp = urllib.request.urlopen(req, timeout=8, context=ctx)
+            resp = urllib.request.urlopen(req, timeout=5, context=ctx)
             body = resp.read().decode('utf-8', errors='ignore')
             
             # Find script tags
@@ -121,7 +121,7 @@ def run(target, engine):
             req = urllib.request.Request(js_url, headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             })
-            resp = urllib.request.urlopen(req, timeout=8, context=ctx)
+            resp = urllib.request.urlopen(req, timeout=5, context=ctx)
             js_content = resp.read(500000).decode('utf-8', errors='ignore')
             
             for secret_name, (pattern, description) in SECRET_PATTERNS.items():
@@ -152,6 +152,7 @@ def run(target, engine):
                     if ep not in [s['raw'] for s in secrets_found.get('API Endpoint', [])]:
                         secrets_found.setdefault('API Endpoint', []).append({
                             'source': js_url,
+                            'masked': ep[:80],
                             'raw': ep[:80]
                         })
                         engine.print_status(f"  🔗 Endpoint: {ep[:80]}", "info")

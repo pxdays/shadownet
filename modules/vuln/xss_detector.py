@@ -102,7 +102,7 @@ def run(target, engine):
                     test_req = urllib.request.Request(test_url, headers={
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
                     })
-                    test_resp = urllib.request.urlopen(test_req, timeout=5, context=ctx)
+                    test_resp = urllib.request.urlopen(test_req, timeout=3, context=ctx)
                     test_body = test_resp.read().decode('utf-8', errors='ignore')
                     
                     for pattern, name in XSS_PATTERNS:

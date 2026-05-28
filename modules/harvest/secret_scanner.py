@@ -82,7 +82,7 @@ def run(target, engine):
             engine.print_status(f"  Scanning {page[:60]}...", "info")
             
             req = urllib.request.Request(page, headers={'User-Agent': 'Mozilla/5.0'})
-            resp = urllib.request.urlopen(req, timeout=8, context=ctx)
+            resp = urllib.request.urlopen(req, timeout=5, context=ctx)
             content = resp.read(300000).decode('utf-8', errors='ignore')
             
             for secret_name, (pattern, description) in SECRET_PATTERNS.items():

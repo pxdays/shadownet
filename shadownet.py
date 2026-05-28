@@ -47,6 +47,8 @@ Commands:
     parser.add_argument('--output', '-o', help='Output directory')
     parser.add_argument('--threads', '-t', type=int, default=30, help='Max threads')
     parser.add_argument('--timeout', type=int, default=10, help='Request timeout')
+    parser.add_argument('--fast', '-f', action='store_true', help='Fast mode - skip heavy modules, lower timeouts')
+    parser.add_argument('--skip', nargs='+', help='Skip specific modules (e.g. --skip deep_crawler dns_enum)')
     parser.add_argument('--stealth', '-s', action='store_true', help='Enable stealth mode')
     parser.add_argument('--llm', action='store_true', help='Enable LLM report writing')
     
@@ -85,6 +87,23 @@ Commands:
             modules = [m for m in args.modules if m in engine.plugins.modules]
         else:
             modules = list(engine.plugins.modules.keys())
+        
+        # Apply --skip
+        if args.skip:
+            modules = [m for m in modules if m not in args.skip]
+            engine.print_status(f"Skipping modules: {', '.join(args.skip)}", "info")
+        
+        # Apply --fast mode
+        if args.fast:
+            # Skip slow/heavy modules
+            skip_fast = ['deep_crawler', 'dns_enum', 'whois_lookup', 'takeover_check']
+            modules = [m for m in modules if m not in skip_fast]
+            engine.print_status(f"FAST MODE — skipping: {', '.join(skip_fast)}", "info")
+            # Lower timeouts globally
+            import core.config as cfg
+            cfg.Config.TIMEOUT = 5
+            cfg.Config.MAX_THREADS = 100
+        
         engine.run_pipeline(target, modules)
     
     elif args.command == 'quick':

@@ -69,6 +69,11 @@ def run(target, engine):
             for link in param_links:
                 if not link.startswith('http'):
                     link = base_url.rstrip('/') + '/' + link.lstrip('/')
+                # Only test URLs on the SAME domain
+                parsed_link = urllib.parse.urlparse(link)
+                parsed_base = urllib.parse.urlparse(base_url)
+                if parsed_link.netloc and parsed_link.netloc != parsed_base.netloc:
+                    continue  # Skip external links
                 test_urls.append(link)
         
         # Also try common parameter names on the base URL
@@ -96,7 +101,7 @@ def run(target, engine):
                     for injected_url, param in injection_tests:
                         try:
                             inj_req = urllib.request.Request(injected_url, headers={'User-Agent': 'Mozilla/5.0'})
-                            inj_resp = urllib.request.urlopen(inj_req, timeout=5, context=ctx)
+                            inj_resp = urllib.request.urlopen(inj_req, timeout=3, context=ctx)
                             inj_body = inj_resp.read().decode('utf-8', errors='ignore').lower()
                             
                             # Check for SQL errors

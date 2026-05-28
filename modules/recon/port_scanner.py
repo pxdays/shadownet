@@ -41,7 +41,7 @@ def run(target, engine):
     def scan_port(port):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(2)
+            sock.settimeout(1.5)
             result = sock.connect_ex((hostname, int(port)))
             sock.close()
             
@@ -51,7 +51,7 @@ def run(target, engine):
                 banner = ""
                 try:
                     gsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    gsock.settimeout(3)
+                    gsock.settimeout(2)
                     gsock.connect((hostname, int(port)))
                     gsock.send(b'HELO\r\n')
                     banner_data = gsock.recv(256)
@@ -70,7 +70,7 @@ def run(target, engine):
             pass
         return None
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
         futures = {executor.submit(scan_port, p): p for p in ports}
         
         done = 0

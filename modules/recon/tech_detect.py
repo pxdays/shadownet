@@ -75,7 +75,7 @@ def run(target, engine):
             'Accept-Language': 'en-US,en;q=0.5',
         })
         
-        resp = urllib.request.urlopen(req, timeout=10, context=ctx)
+        resp = urllib.request.urlopen(req, timeout=8, context=ctx)
         headers = dict(resp.headers)
         body = resp.read(50000).decode('utf-8', errors='ignore')
         status = resp.status

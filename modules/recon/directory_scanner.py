@@ -55,7 +55,7 @@ def run(target, engine):
             req = urllib.request.Request(url, method='HEAD', headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             })
-            resp = urllib.request.urlopen(req, timeout=5, context=ctx)
+            resp = urllib.request.urlopen(req, timeout=3, context=ctx)
             size = resp.headers.get('Content-Length', '?')
             return {'url': url, 'status': resp.status, 'size': size}
         except urllib.error.HTTPError as e:
@@ -65,7 +65,7 @@ def run(target, engine):
         except Exception:
             return None
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
         futures = {executor.submit(check_path, p): p for p in targets}
         done = 0
         total = len(targets)

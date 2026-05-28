@@ -38,7 +38,7 @@ def run(target, engine):
             has_https = False
             try:
                 ctx = ssl.create_default_context()
-                with ctx.wrap_socket(socket.socket(), server_hostname=full, timeout=3) as s:
+                with ctx.wrap_socket(socket.socket(), server_hostname=full, timeout=2) as s:
                     s.connect((full, 443))
                     has_https = True
                     s.close()
@@ -55,7 +55,7 @@ def run(target, engine):
             checked += 1
             return None
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
         futures = {executor.submit(check_sub, sub): sub for sub in wordlist}
         done = 0
         total = len(wordlist)
