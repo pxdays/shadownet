@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.zip
+output/
+config.json
+.watcher_config.json
+.DS_Store
+*.egg-info/
+dist/
+build/
+/.gitignore.swp

@@ -1,0 +1,15 @@
+# ShadowNet - Dependencies
+# Core (always needed):
+# (stdlib only - no extra deps for basic operation)
+
+# Optional - DNS enumeration (subdomain_scanner, dns_enum):
+dnspython>=2.0.0
+
+# Optional - Better HTML reports:
+# (uses inline styles, no extra deps)
+
+# Optional - Local LLM integration:
+# Requires Ollama (https://ollama.ai) - no pip package needed
+
+# Optional - Wordlist downloads:
+# (built-in wordlists included, no extra deps)
