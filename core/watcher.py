@@ -2,15 +2,17 @@
 import time
 import json
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
+
+from .config import Config
 
 class Watcher:
     """Monitors targets on a schedule and diffs results"""
     
     def __init__(self, engine):
         self.engine = engine
-        self.watch_file = engine.config.ROOT / ".watcher_config.json"
+        self.watch_file = Config.ROOT / ".watcher_config.json"
         self.running = False
         self.thread = None
         self._load()
@@ -71,7 +73,7 @@ class Watcher:
         return "Watcher stopped"
     
     def diff_findings(self, old_findings, new_findings):
-        """Compare two sets of findings and return new/changed ones"""
+        """Compare two sets of findings"""
         old_keys = {(f.get('title', ''), f.get('severity', '')) for f in old_findings}
         new_keys = {(f.get('title', ''), f.get('severity', '')) for f in new_findings}
         
@@ -107,7 +109,7 @@ class Watcher:
                         last_time = datetime.fromisoformat(last)
                         if (now - last_time).total_seconds() >= interval:
                             should_scan = True
-                    except:
+                    except Exception:
                         should_scan = True
                 
                 if should_scan:
@@ -115,16 +117,13 @@ class Watcher:
                         target = target_parse(target_config['target'])
                         self.engine.print_status(f"[WATCH] Scanning {target_config['target']}...", "info")
                         
-                        # Store old findings for diff
                         from .database import Database
                         old_db = Database()
                         old_findings = old_db.get_findings()
                         
-                        # Run scan
-                        modules = list(self.engine.plugins.modules.keys())[:8]  # Run top 8 modules
+                        modules = list(self.engine.plugins.modules.keys())[:8]
                         self.engine.run_pipeline(target, modules)
                         
-                        # Get new findings for diff
                         new_findings = self.engine.db.get_findings()
                         diff = self.diff_findings(old_findings, new_findings)
                         
@@ -139,8 +138,7 @@ class Watcher:
                     except Exception as e:
                         self.engine.print_status(f"[WATCH] Error scanning {target_config['target']}: {e}", "error")
             
-            # Wait before checking again
-            for _ in range(60):  # Check every minute
+            for _ in range(60):
                 if not self.running:
                     break
                 time.sleep(1)
