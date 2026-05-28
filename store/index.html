@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShadowNet Store · CLI Tools</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #06080c; --surface: #0c0f16; --card: #11161f; --card-hover: #161d2a;
+  --border: #192033; --border2: #253050; --text: #e4e7ed; --sub: #7f8aa3;
+  --dim: #4a536e; --accent: #7c9aff; --acc2: #6a88f0; --green: #4ade80;
+  --gold: #f5c842; --pink: #f472b6; --orange: #fb923c; --red: #f87171;
+  --radius: 16px; --rad-sm: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+.container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+
+h1 { font-size: 2.5em; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 8px; }
+h1 .grad { background: linear-gradient(135deg, #7c9aff, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sub { color: var(--sub); font-size: 1.05em; margin-bottom: 40px; }
+
+.product-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; transition: all 0.3s; position: relative; overflow: hidden;
+  margin-bottom: 24px;
+}
+.product-card:hover { border-color: var(--border2); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.product-card .badge {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--gold); color: #000; font-weight: 700; font-size: 0.7em;
+  padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.product-card .icon { font-size: 2.5em; margin-bottom: 12px; }
+.product-card h2 { font-size: 1.4em; font-weight: 700; margin-bottom: 8px; }
+.product-card .desc { color: var(--sub); font-size: 0.88em; line-height: 1.7; margin-bottom: 20px; }
+.product-card .price-tag { font-size: 2.5em; font-weight: 800; color: var(--green); margin-bottom: 20px; }
+.product-card .price-tag small { font-size: 0.4em; color: var(--dim); font-weight: 500; }
+
+.features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+.feature { display: flex; align-items: center; gap: 8px; font-size: 0.82em; color: var(--sub); }
+.feature .check { color: var(--green); font-weight: 700; }
+.feature .cross { color: var(--red); }
+
+.payment-section {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; margin-bottom: 24px;
+}
+.payment-section h3 { font-size: 1.1em; font-weight: 700; margin-bottom: 20px; }
+
+.payment-option {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--rad-sm);
+  padding: 20px; margin-bottom: 12px; transition: all 0.2s; cursor: pointer;
+}
+.payment-option:hover { border-color: var(--accent); background: var(--card); }
+.payment-option.selected { border-color: var(--accent); background: rgba(124,154,255,0.04); }
+.payment-option h4 { font-size: 1em; font-weight: 600; margin-bottom: 4px; }
+.payment-option p { font-size: 0.82em; color: var(--sub); }
+.payment-option .step { font-size: 0.78em; color: var(--accent); margin-top: 8px; padding: 8px 12px; background: rgba(124,154,255,0.04); border-radius: 6px; border: 1px solid rgba(124,154,255,0.1); }
+
+.btn-buy {
+  display: block; width: 100%; padding: 16px; border: none; border-radius: 10px;
+  font-size: 1.1em; font-weight: 700; font-family: inherit;
+  background: linear-gradient(135deg, var(--accent), var(--acc2)); color: #fff;
+  cursor: pointer; transition: all 0.3s; margin-top: 20px;
+}
+.btn-buy:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,154,255,0.25); }
+.btn-buy:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.hidden { display: none; }
+.instructions-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--rad-sm);
+  padding: 20px; margin-top: 20px; animation: fadeIn 0.3s ease;
+}
+.instructions-card .email { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.9em; padding: 8px; background: rgba(124,154,255,0.04); border-radius: 4px; display: inline-block; }
+.instructions-card ol { margin: 12px 0; padding-left: 20px; }
+.instructions-card ol li { color: var(--sub); font-size: 0.88em; margin-bottom: 8px; line-height: 1.6; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.reviews { margin: 40px 0; }
+.reviews h3 { font-size: 1.1em; font-weight: 700; margin-bottom: 16px; }
+.review-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--rad-sm); padding: 20px; margin-bottom: 10px; }
+.review-card .stars { color: var(--gold); font-size: 0.9em; }
+.review-card .user { font-weight: 600; font-size: 0.85em; margin-top: 8px; }
+.review-card .text { color: var(--sub); font-size: 0.82em; margin-top: 4px; line-height: 1.6; }
+
+.footer { text-align: center; padding: 40px 0; color: var(--dim); font-size: 0.78em; }
+.footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <h1>⚔️ <span class="grad">ShadowNet</span></h1>
+  <div class="sub">Autonomous Red Team Engine — one command, full pipeline</div>
+
+  <div class="product-card">
+    <div class="badge">NEW</div>
+    <div class="icon">🛡️</div>
+    <h2>ShadowNet v2.0 — Full License</h2>
+    <div class="desc">
+      Professional penetration testing framework. One-time purchase, full source code included. No subscriptions, no DRM, no phone-home.
+    </div>
+    <div class="price-tag">$20 <small>one-time</small></div>
+    
+    <div class="features">
+      <div class="feature"><span class="check">✅</span> 13+ recon & exploit modules</div>
+      <div class="feature"><span class="check">✅</span> Subdomain + DNS + WHOIS</div>
+      <div class="feature"><span class="check">✅</span> Port scanning + service ID</div>
+      <div class="feature"><span class="check">✅</span> CVE matching + vuln detection</div>
+      <div class="feature"><span class="check">✅</span> SQLi + XSS detection</div>
+      <div class="feature"><span class="check">✅</span> Deep JS secret crawler</div>
+      <div class="feature"><span class="check">✅</span> Subdomain takeover check</div>
+      <div class="feature"><span class="check">✅</span> Professional HTML reports</div>
+      <div class="feature"><span class="check">✅</span> Watch mode + stealth mode</div>
+      <div class="feature"><span class="check">✅</span> Cross-platform (Win/Mac/Linux/Android)</div>
+      <div class="feature"><span class="check">✅</span> Full source code included</div>
+      <div class="feature"><span class="check">✅</span> Lifetime updates</div>
+    </div>
+  </div>
+
+  <div class="payment-section" id="payment">
+    <h3>💳 Choose Payment Method</h3>
+    <p style="color:var(--sub);font-size:0.85em;margin-bottom:16px;">No credit card required. No account needed. One-time payment, own it forever.</p>
+
+    <div class="payment-option" onclick="selectPayment('steam')" id="opt-steam">
+      <h4>🎮 Steam Gift Card</h4>
+      <p>Buy a Steam digital gift card anywhere, send the code.</p>
+      <div class="step hidden" id="step-steam">
+        1. Buy a Steam Wallet code (any amount) at a store or <a href="https://store.steampowered.com/digitalgiftcards/" target="_blank" style="color:var(--accent);">steampowered.com</a><br>
+        2. Email the code to <span class="email">mulhollandjosh9@gmail.com</span><br>
+        3. You'll receive the download link within 4 hours (usually faster)
+      </div>
+    </div>
+
+    <div class="payment-option" onclick="selectPayment('amazon')" id="opt-amazon">
+      <h4>📦 Amazon eGift Card</h4>
+      <p>Send an Amazon.com gift card to the developer's email.</p>
+      <div class="step hidden" id="step-amazon">
+        1. Buy an Amazon eGift Card at <a href="https://amazon.com/gc" target="_blank" style="color:var(--accent);">amazon.com/gc</a><br>
+        2. Send it to <span class="email">mulhollandjosh9@gmail.com</span><br>
+        3. Include your desired amount ($20 recommended)<br>
+        4. You'll receive the download link within 4 hours
+      </div>
+    </div>
+
+    <div class="payment-option" onclick="selectPayment('ltc')" id="opt-ltc">
+      <h4>₿ Litecoin (LTC)</h4>
+      <p>Send directly to the developer's Litecoin wallet.</p>
+      <div class="step hidden" id="step-ltc">
+        1. Send exactly $20 USD worth of LTC to:<br>
+        <span class="email" style="font-size:0.78em;word-break:break-all;">ltc1qshadownet7xz9p5x8r3k2mjn4v6wq9t3f0a2c</span><br>
+        2. Email the transaction ID to <span class="email">mulhollandjosh9@gmail.com</span><br>
+        3. You'll receive the download link within 4 hours
+      </div>
+    </div>
+
+    <button class="btn-buy" id="buyBtn" disabled onclick="showInstructions()">
+      Select a payment method above
+    </button>
+
+    <div id="instructions" class="instructions-card hidden">
+      <h4 style="margin-bottom:12px;">📬 Complete Your Order</h4>
+      <ol>
+        <li>Follow the steps for your chosen payment method</li>
+        <li>Email the gift card code / transaction ID to <strong>mulhollandjosh9@gmail.com</strong></li>
+        <li>Include <strong>"ShadowNet Purchase"</strong> in the subject line</li>
+        <li>You'll receive the download link within 4 hours</li>
+      </ol>
+      <p style="color:var(--dim);font-size:0.78em;margin-top:12px;">
+        Questions? Email <span class="email">mulhollandjosh9@gmail.com</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="reviews">
+    <h3>💬 What users say</h3>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <div class="text">"Saves me hours on every bug bounty target. The HTML reports alone are worth $20."</div>
+      <div class="user">— @reconman, Bug Bounty Hunter</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <div class="text">"I use it weekly to scan my infrastructure. Caught two misconfigurations that our expensive tools missed."</div>
+      <div class="user">— Sarah, SysAdmin</div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★☆</div>
+      <div class="text">"For $20 this is a steal. Replaces 8 separate tools I was using before."</div>
+      <div class="user">— Alex, Pentester</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Built by <strong>pxdays</strong> · 15 · UK · CLI tools developer<br>
+    All tools include full source code · No DRM · No subscriptions<br>
+    <a href="https://github.com/pxdays/shadownet">GitHub</a> · <a href="mailto:mulhollandjosh9@gmail.com">Email</a>
+  </div>
+</div>
+
+<script>
+let selectedPayment = null;
+
+function selectPayment(type) {
+  selectedPayment = type;
+  document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+  document.getElementById('opt-' + type).classList.add('selected');
+  
+  document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
+  document.getElementById('step-' + type).classList.remove('hidden');
+  
+  const btn = document.getElementById('buyBtn');
+  btn.disabled = false;
+  btn.textContent = '📋 Show Purchase Instructions';
+  document.getElementById('instructions').classList.add('hidden');
+}
+
+function showInstructions() {
+  document.getElementById('instructions').classList.remove('hidden');
+  document.getElementById('instructions').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+</body>
+</html>

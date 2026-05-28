@@ -32,6 +32,9 @@ Commands:
   report <target>     Generate HTML report from scan data
   interactive         Launch interactive mode
   modules             List all available modules
+  deep_crawler          Deep JS secret hunter (PREMIUM)
+  takeover_check        Subdomain takeover detection
+  xss_detector          XSS vulnerability scanning
   stats               Show database statistics
   watch-list          List monitored targets
   watch-stop          Stop continuous monitoring  
@@ -91,7 +94,7 @@ Commands:
         engine.print_banner()
         from core.utils import target_parse
         target = target_parse(args.target)
-        keywords = ['subdomain', 'dns', 'port', 'tech', 'whois']
+        keywords = ['subdomain', 'dns', 'port', 'tech', 'whois', 'takeover', 'xss', 'secret']
         modules = [m for m in engine.plugins.modules if any(k in m.lower() for k in keywords)]
         if not modules:
             modules = list(engine.plugins.modules.keys())[:5]

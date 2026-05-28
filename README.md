@@ -125,3 +125,27 @@ Full source code included. No DRM. No subscriptions. Own it forever.
 ---
 
 *Built with too much tea and zero sleep — pxdays, 2026*
+
+## 🆕 v2.0 New Modules
+
+| Module | Category | Description | Tier |
+|---|---|---|---|
+| `deep_crawler` | Harvest | Deep JS crawling for API keys, tokens, secrets, endpoints | **PREMIUM** |
+| `takeover_check` | Recon | Detect dangling DNS / subdomain takeover vulnerabilities | **PREMIUM** |
+| `xss_detector` | Vuln | Reflected XSS detection with 15+ payloads | **PREMIUM** |
+
+**PREMIUM** features are available in the full $20 version.
+
+## 🛒 Purchase
+
+**One-time:** $20 USD via Steam Gift Card, Amazon eGift Card, or Litecoin.
+
+👉 **[Visit the Store](https://pxdays.github.io/store)**
+
+Full source code included. No DRM. No subscriptions. Lifetime updates.
+
+## 📬 Contact
+
+Built by **pxdays** (15) · UK · CLI tools developer  
+Email: mulhollandjosh9@gmail.com
+
